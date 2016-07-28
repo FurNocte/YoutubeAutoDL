@@ -2,8 +2,8 @@ var youtubedl = require('youtube-dl');
 var fs = require('fs');
 
 function getVideo(videoSnippet) {
-    fs.access(__dirname + '/videos/', function(err) {
-        if (err) {
+    fs.exists(__dirname + '/videos/', function(exists) {
+        if (!exists) {
             fs.mkdir(__dirname + '/videos/', function() {
                 getVideo(videoSnippet);
             });
@@ -30,8 +30,8 @@ function getVideo(videoSnippet) {
 }
 
 function getMusic(musicSnippet) {
-    fs.access(__dirname + '/musics/', function(err) {
-        if (err) {
+    fs.exists(__dirname + '/musics/', function(exists) {
+        if (!exists) {
             fs.mkdir(__dirname + '/musics/', function() {
                 getMusic(musicSnippet);
             });
