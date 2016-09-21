@@ -16,7 +16,7 @@ function getMusics(index) {
     return defer.promise;
 }
 
-function getVideos() {
+function getVideos(index) {
     var defer = P.defer();
     fs.readdir(__dirname + '/videos', function(err, files) {
         if (err)
