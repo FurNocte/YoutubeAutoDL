@@ -16,6 +16,7 @@
     "url": "https://github.com/FurNocte/YoutubeAutoDL/issues"
   },
   "dependencies": {
+    "express": "^4.14.0",
     "p-promise": "^0.5.0",
     "request": "^2.74.0",
     "underscore": "^1.8.3",
