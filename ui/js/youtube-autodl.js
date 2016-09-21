@@ -9,7 +9,7 @@ function loadPage() {
 
 function getMusics() {
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", 'http://127.0.0.1:8081/api/musics', false); // false for synchronous request
+    xhttp.open("GET",'http://' + location.host + '/api/musics', false); // false for synchronous request
     xhttp.send(null);
     var list = JSON.parse(xhttp.responseText);
     for (var item in list) {
@@ -19,7 +19,7 @@ function getMusics() {
 
 function getVideos() {
     xhttp = new XMLHttpRequest();
-    xhttp.open("GET", 'http://127.0.0.1:8081/api/videos', false); // false for synchronous request
+    xhttp.open("GET", 'http://' + location.host + '/api/videos', false); // false for synchronous request
     xhttp.send(null);
     var list = JSON.parse(xhttp.responseText);
     for (var item in list) {
@@ -29,7 +29,7 @@ function getVideos() {
 
 function refreshList() {
     xhttp = new XMLHttpRequest();
-    xhttp.open("GET", 'http://127.0.0.1:8081/api/refresh', false); // false for synchronous request
+    xhttp.open("GET", 'http://' + location.host + '/api/refresh', false); // false for synchronous request
     xhttp.send(null);
     loadPage();
 }
