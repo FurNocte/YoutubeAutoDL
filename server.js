@@ -3,6 +3,14 @@ var api = require('./core/api.js');
 
 var app = express();
 // API
+app.get('/api/refresh', function(req, res) {
+    api.refreshList().then(function(r) {
+        res.status(200).json(r);
+    }).fail(function(err) {
+        res.status(503).json(err);
+    });
+});
+
 app.get('/api/musics', function(req, res) {
     api.getMusics().then(function(list) {
         res.status(200).json(list);

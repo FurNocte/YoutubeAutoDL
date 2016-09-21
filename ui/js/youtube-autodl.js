@@ -1,6 +1,8 @@
 loadPage();
 
 function loadPage() {
+    $('#list_musics').empty();
+    $('#list_videos').empty();
     getMusics();
     getVideos();
 }
@@ -23,4 +25,11 @@ function getVideos() {
     for (var item in list) {
         $('#list_videos').append('<a href="./videos/'+ list[item] + '" download>' + list[item] + '</a><br/>');
     }
+}
+
+function refreshList() {
+    xhttp = new XMLHttpRequest();
+    xhttp.open("GET", 'http://127.0.0.1:8081/api/refresh', false); // false for synchronous request
+    xhttp.send(null);
+    loadPage();
 }
