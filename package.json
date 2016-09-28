@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "express": "^4.14.0",
+    "log-js": "git+https://github.com/FurNocte/log-js.git",
     "p-promise": "^0.5.0",
     "request": "^2.74.0",
     "underscore": "^1.8.3",
