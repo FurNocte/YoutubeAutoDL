@@ -1,6 +1,7 @@
 var youtubedl = require('youtube-dl');
 var request = require('request');
 var fs = require('fs');
+var convert = require('./audioConvert.js');
 
 var conf = {
     apiKey: 'AIzaSyCiCzxxePhQjjz-htKYJf4Mho_4JVGDGLc'
@@ -43,7 +44,7 @@ function getMusic(musicSnippet) {
             return;
         }
         var url = musicSnippet.resourceId.videoId;
-        var title = musicSnippet.title;
+        var title = musicSnippet.title.replace(/ /g, '_');
         var video = youtubedl('http://www.youtube.com/watch?v=' + url,
                 // Optional arguments passed to youtube-dl.
                 ['-f 140'],
@@ -56,6 +57,7 @@ function getMusic(musicSnippet) {
             console.log('filename: ' + info._filename);
             console.log('size: ' + info.size);
             video.pipe(fs.createWriteStream(__dirname + '/musics/' + title + '.m4a'));
+            convert.convert(__dirname + '/musics/' + title + '.m4a', __dirname + '/musics/' + title + '.mp3');
         });
     });
 }
