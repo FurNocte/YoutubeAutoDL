@@ -1,7 +1,6 @@
 var youtubedl = require('youtube-dl');
 var request = require('request');
 var fs = require('fs');
-var convert = require('./audioConvert.js');
 
 var conf = {
     apiKey: 'AIzaSyCiCzxxePhQjjz-htKYJf4Mho_4JVGDGLc'
@@ -16,7 +15,15 @@ function getVideo(videoSnippet) {
             return;
         }
         var url = videoSnippet.resourceId.videoId;
-        var title = videoSnippet.title;
+        var title = videoSnippet.title.replace(/ /g, '_').split('');
+        title = title.map(function(el) {
+            if (el.charCodeAt(0) < 48 || (el.charCodeAt(0) > 57 && el.charCodeAt(0) < 65) || el.charCodeAt(0) > 122)
+                return '';
+            else
+                return el;
+        });
+        title = title.join().replace(/,/g, '');
+        console.log(title);
         var extension = '';
         var video = youtubedl('http://www.youtube.com/watch?v=' + url,
                 // Optional arguments passed to youtube-dl.
@@ -44,7 +51,15 @@ function getMusic(musicSnippet) {
             return;
         }
         var url = musicSnippet.resourceId.videoId;
-        var title = musicSnippet.title.replace(/ /g, '_');
+        var title = musicSnippet.title.replace(/ /g, '_').split('');
+        title = title.map(function(el) {
+            if (el.charCodeAt(0) < 48 || (el.charCodeAt(0) > 57 && el.charCodeAt(0) < 65) || el.charCodeAt(0) > 122)
+                return '';
+            else
+                return el;
+        });
+        title = title.join().replace(/,/g,'');
+        console.log(title);
         var video = youtubedl('http://www.youtube.com/watch?v=' + url,
                 // Optional arguments passed to youtube-dl.
                 ['-f 140'],
@@ -57,7 +72,6 @@ function getMusic(musicSnippet) {
             console.log('filename: ' + info._filename);
             console.log('size: ' + info.size);
             video.pipe(fs.createWriteStream(__dirname + '/musics/' + title + '.m4a'));
-            convert.convert(__dirname + '/musics/' + title + '.m4a', __dirname + '/musics/' + title + '.mp3');
         });
     });
 }
