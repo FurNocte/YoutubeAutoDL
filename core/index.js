@@ -2,8 +2,6 @@ var P = require('p-promise');
 var _ = require('underscore');
 var request = require('request');
 var dloader = require('./dloader.js');
-var Log = require('log-js');
-var log = new Log(0, 'Youtube-AutoDL', '/var/log/youtube-autodl.log');
 
 var conf = {
     apiKey: 'AIzaSyCiCzxxePhQjjz-htKYJf4Mho_4JVGDGLc'

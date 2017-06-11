@@ -29,7 +29,8 @@ function getVideo(videoSnippet) {
                 // Optional arguments passed to youtube-dl.
                 ['-f best'],
                 // Additional options can be given for calling `child_process.execFile()`.
-                { cwd: __dirname });
+                { cwd: __dirname,
+                maxBuffer: 250000*1024});
 
         // Will be called when the download starts.
         video.on('info', function(info) {
@@ -60,18 +61,19 @@ function getMusic(musicSnippet) {
         });
         title = title.join().replace(/,/g,'');
         console.log(title);
-        var video = youtubedl('http://www.youtube.com/watch?v=' + url,
+        var music = youtubedl('http://www.youtube.com/watch?v=' + url,
                 // Optional arguments passed to youtube-dl.
                 ['-f 140'],
                 // Additional options can be given for calling `child_process.execFile()`.
-                { cwd: __dirname });
+                { cwd: __dirname,
+                maxBuffer: 250000*1024});
 
         // Will be called when the download starts.
-        video.on('info', function(info) {
+        music.on('info', function(info) {
             console.log('Download started');
             console.log('filename: ' + info._filename);
             console.log('size: ' + info.size);
-            video.pipe(fs.createWriteStream(__dirname + '/musics/' + title + '.m4a'));
+            music.pipe(fs.createWriteStream(__dirname + '/musics/' + title + '.m4a'));
         });
     });
 }
