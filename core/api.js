@@ -2,6 +2,10 @@ var fs = require('fs');
 var P = require('p-promise');
 var exec = require('child_process').exec;
 
+function getStatus() {
+    return true;
+}
+
 function getMusics(index) {
     var defer = P.defer();
     fs.readdir(__dirname + '/musics', function(err, files) {
@@ -45,6 +49,7 @@ function refreshList() {
     return defer.promise;
 }
 
+exports.getStatus = getStatus;
 exports.getMusics = getMusics;
 exports.getVideos = getVideos;
 exports.refreshList = refreshList;
