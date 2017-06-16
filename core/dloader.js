@@ -1,6 +1,7 @@
 var youtubedl = require('youtube-dl');
 var request = require('request');
 var fs = require('fs');
+var P = require('p-promise');
 
 var conf = {
     apiKey: 'AIzaSyCiCzxxePhQjjz-htKYJf4Mho_4JVGDGLc'
@@ -78,12 +79,46 @@ function getMusic(musicSnippet) {
     });
 }
 
-function getVideoByUrl(url) {
-    var id = url.match(/watch\?v=(?=([a-z|0-9]*))/i)[1];
+function getMusicById(id) {
+    var defer = P.defer();
     request('https://www.googleapis.com/youtube/v3/videos?part=snippet&id=' + id + '&key=' + conf.apiKey,
             function(err, response, res) {
                 if (err)
-                    return err;
+                    defer.reject(err);
+                else {
+                    res = JSON.parse(res);
+                    var videoSnippet = res.items[0].snippet;
+                    var title = videoSnippet.title;
+                    var extension = '';
+                    var video = youtubedl('http://www.youtube.com/watch?v=' + id,
+                            // Optional arguments passed to youtube-dl.
+                            ['-f 140'],
+                            // Additional options can be given for calling `child_process.execFile()`.
+                            { cwd: __dirname });
+
+                    // Will be called when the download starts.
+                    video.on('info', function(info) {
+                        extension = info._filename.match(/\..{3,4}$/)[0];
+                        console.log('Download started');
+                        console.log('filename: ' + info._filename);
+                        console.log('size: ' + info.size);
+                        video.pipe(fs.createWriteStream(__dirname + '/musics/' + title + extension));
+                    });
+                    video.on('end', function() {
+                        console.log('completed');
+                        defer.resolve('/musics/' + title + extension);
+                    });
+                }
+            });
+    return defer.promise;
+}
+
+function getVideoById(id) {
+    var defer = P.defer();
+    request('https://www.googleapis.com/youtube/v3/videos?part=snippet&id=' + id + '&key=' + conf.apiKey,
+            function(err, response, res) {
+                if (err)
+                    defer.reject(err);
                 else {
                     res = JSON.parse(res);
                     var videoSnippet = res.items[0].snippet;
@@ -101,40 +136,17 @@ function getVideoByUrl(url) {
                         console.log('Download started');
                         console.log('filename: ' + info._filename);
                         console.log('size: ' + info.size);
-                        video.pipe(fs.createWriteStream('/tmp/' + title + extension));
+                        video.pipe(fs.createWriteStream(__dirname + '/videos/' + title + extension));
+                    });
+                    video.on('end', function() {
+                        console.log('completed');
+                        defer.resolve('/videos/' + title + extension);
                     });
                 }
             });
+    return defer.promise;
 }
-
-function getMusicByUrl(url) {
-    var id = url.match(/watch\?v=(?=([a-z|0-9]*))/i)[1];
-    request('https://www.googleapis.com/youtube/v3/videos?part=snippet&id=' + id + '&key=' + conf.apiKey,
-            function(err, response, res) {
-                if (err)
-                    return err;
-                else {
-                    res = JSON.parse(res);
-                    var videoSnippet = res.items[0].snippet;
-                    var title = videoSnippet.title;
-                    var video = youtubedl('http://www.youtube.com/watch?v=' + id,
-                            // Optional arguments passed to youtube-dl.
-                            ['-f 140'],
-                            // Additional options can be given for calling `child_process.execFile()`.
-                            { cwd: __dirname });
-
-                    // Will be called when the download starts.
-                    video.on('info', function(info) {
-                        console.log('Download started');
-                        console.log('filename: ' + info._filename);
-                        console.log('size: ' + info.size);
-                        video.pipe(fs.createWriteStream('/tmp/' + title + '.m4a'));
-                    });
-                }
-            });
-}
-
 exports.getVideo = getVideo;
 exports.getMusic = getMusic;
-exports.getVideoByUrl = getVideoByUrl;
-exports.getMusicByUrl = getMusicByUrl;
+exports.getMusicById = getMusicById;
+exports.getVideoById = getVideoById;

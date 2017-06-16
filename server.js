@@ -25,8 +25,8 @@ app.get('/api/musics', function(req, res) {
 });
 
 app.get('/api/musics/:id', function(req, res) {
-    api.getMusics(req.params.id).then(function(name) {
-        res.status(200).json(name);
+    api.getMusicById(req.params.id).then(function(path) {
+        res.status(200).json(path);
     }).fail(function(err) {
         res.status(503).json(err);
     });
@@ -41,8 +41,8 @@ app.get('/api/videos', function(req, res) {
 });
 
 app.get('/api/videos/:id', function(req, res) {
-    api.getVideos(req.params.id).then(function(list) {
-        res.status(200).json(list);
+    api.getVideoById(req.params.id).then(function(path) {
+        res.status(200).json(path);
     }).fail(function(err) {
         res.status(503).json(err);
     });
