@@ -8,6 +8,7 @@ var conf = {
 }
 
 function getVideo(videoSnippet) {
+    var defer = P.defer();
     fs.exists(__dirname + '/videos/', function(exists) {
         if (!exists) {
             fs.mkdir(__dirname + '/videos/', function() {
@@ -41,10 +42,15 @@ function getVideo(videoSnippet) {
             console.log('size: ' + info.size);
             video.pipe(fs.createWriteStream(__dirname + '/videos/' + title + extension));
         });
+        video.on('end', function() {
+            defer.resolve('/videos/' + title + extension);
+        });
     });
+    return defer.promise;
 }
 
 function getMusic(musicSnippet) {
+    var defer = P.defer();
     fs.exists(__dirname + '/musics/', function(exists) {
         if (!exists) {
             fs.mkdir(__dirname + '/musics/', function() {
@@ -76,7 +82,11 @@ function getMusic(musicSnippet) {
             console.log('size: ' + info.size);
             music.pipe(fs.createWriteStream(__dirname + '/musics/' + title + '.m4a'));
         });
+        music.on('end', function() {
+            defer.resolve('/musics/' + title + '.m4a');
+        });
     });
+    return defer.promise;
 }
 
 function getMusicById(id) {
@@ -88,7 +98,11 @@ function getMusicById(id) {
                 else {
                     res = JSON.parse(res);
                     var musicSnippet = res.items[0].snippet;
-                    getMusic(musicSnippet);
+                    musicSnippet.resourceId = {};
+                    musicSnippet.resourceId.videoId = id;
+                    getMusic(musicSnippet).then(function(res) {
+                        defer.resolve(res);
+                    });
                 }
             });
     return defer.promise;
@@ -103,7 +117,11 @@ function getVideoById(id) {
                 else {
                     res = JSON.parse(res);
                     var videoSnippet = res.items[0].snippet;
-                    getVideo(videoSnippet);
+                    videoSnippet.resourceId = {};
+                    videoSnippet.resourceId.videoId = id;
+                    getVideo(videoSnippet).then(function(res) {
+                        defer.resolve(res);
+                    });
                 }
             });
     return defer.promise;
