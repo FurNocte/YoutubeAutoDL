@@ -2,3 +2,4 @@ node_modules/
 *.swp
 core/musics
 core/videos
+npm-debug.log
