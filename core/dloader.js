@@ -87,27 +87,8 @@ function getMusicById(id) {
                     defer.reject(err);
                 else {
                     res = JSON.parse(res);
-                    var videoSnippet = res.items[0].snippet;
-                    var title = videoSnippet.title;
-                    var extension = '';
-                    var video = youtubedl('http://www.youtube.com/watch?v=' + id,
-                            // Optional arguments passed to youtube-dl.
-                            ['-f 140'],
-                            // Additional options can be given for calling `child_process.execFile()`.
-                            { cwd: __dirname });
-
-                    // Will be called when the download starts.
-                    video.on('info', function(info) {
-                        extension = info._filename.match(/\..{3,4}$/)[0];
-                        console.log('Download started');
-                        console.log('filename: ' + info._filename);
-                        console.log('size: ' + info.size);
-                        video.pipe(fs.createWriteStream(__dirname + '/musics/' + title + extension));
-                    });
-                    video.on('end', function() {
-                        console.log('completed');
-                        defer.resolve('/musics/' + title + extension);
-                    });
+                    var musicSnippet = res.items[0].snippet;
+                    getMusic(musicSnippet);
                 }
             });
     return defer.promise;
@@ -122,26 +103,7 @@ function getVideoById(id) {
                 else {
                     res = JSON.parse(res);
                     var videoSnippet = res.items[0].snippet;
-                    var title = videoSnippet.title;
-                    var extension = '';
-                    var video = youtubedl('http://www.youtube.com/watch?v=' + id,
-                            // Optional arguments passed to youtube-dl.
-                            ['-f best'],
-                            // Additional options can be given for calling `child_process.execFile()`.
-                            { cwd: __dirname });
-
-                    // Will be called when the download starts.
-                    video.on('info', function(info) {
-                        extension = info._filename.match(/\..{3,4}$/)[0];
-                        console.log('Download started');
-                        console.log('filename: ' + info._filename);
-                        console.log('size: ' + info.size);
-                        video.pipe(fs.createWriteStream(__dirname + '/videos/' + title + extension));
-                    });
-                    video.on('end', function() {
-                        console.log('completed');
-                        defer.resolve('/videos/' + title + extension);
-                    });
+                    getVideo(videoSnippet);
                 }
             });
     return defer.promise;
